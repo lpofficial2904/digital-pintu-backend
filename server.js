@@ -56,50 +56,68 @@ app.use(express.urlencoded({ extended: true }));
 
 // import cors from "cors";
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "https://digital-pintu-frontend.vercel.app",
-  "https://digital-pintu-frontend-1zasgaw7e-digitalpintu.vercel.app",
-   "https://digital-pintu-admin.vercel.app",
-];
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   "http://localhost:5174",
+//   "https://digital-pintu-frontend.vercel.app",
+//   "https://digital-pintu-frontend-1zasgaw7e-digitalpintu.vercel.app",
+//    "https://digital-pintu-admin.vercel.app",
+// ];
 
 // app.use(
 //   cors({
-//     origin(origin, callback) {
+//     origin: (origin, callback) => {
 //       if (!origin) return callback(null, true);
 
-//       if (allowedOrigins.includes(origin)) {
+//       if (
+//         origin === "http://localhost:5173" ||
+//         origin.endsWith(".vercel.app")
+//       ) {
 //         return callback(null, true);
 //       }
 
-//       return callback(new Error("Not allowed by CORS"));
+//       callback(new Error("Not allowed by CORS"));
 //     },
 //     credentials: true,
-//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//     allowedHeaders: ["Content-Type", "Authorization"],
 //   })
 // );
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://127.0.0.1:5173",
+  "http://127.0.0.1:5174",
+  "https://digital-pintu-frontend.vercel.app",
+  "https://digital-pintu-frontend-1zasgaw7e-digitalpintu.vercel.app",
+  "https://digital-pintu-admin.vercel.app",
+];
 
 app.use(
   cors({
     origin: (origin, callback) => {
+      console.log("Incoming Origin:", origin);
+
       if (!origin) return callback(null, true);
 
       if (
-        origin === "http://localhost:5173" ||
+        allowedOrigins.includes(origin) ||
         origin.endsWith(".vercel.app")
       ) {
         return callback(null, true);
       }
 
-      callback(new Error("Not allowed by CORS"));
+      console.log("Blocked Origin:", origin);
+
+      return callback(null, false);
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-app.options("*", cors());
+// app.options(/.*/, cors());
+app.options(/.*/, cors());
 
 app.use("/api/services", serviceRoutes);
 app.use("/api/reviews", reviewRoutes);
@@ -107,6 +125,16 @@ app.use("/api/auth", authRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/tracker", trackerRoutes);
+
+app.use((err, req, res, next) => {
+  console.error("GLOBAL ERROR");
+  console.error(err);
+
+  res.status(500).json({
+    success: false,
+    message: err.message,
+  });
+});
 
 app.get("/", (req, res) => {
   res.send("API Running");
