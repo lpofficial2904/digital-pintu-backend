@@ -58,8 +58,10 @@ app.use(express.urlencoded({ extended: true }));
 
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:5174",
   "https://digital-pintu-frontend.vercel.app",
   "https://digital-pintu-frontend-1zasgaw7e-digitalpintu.vercel.app",
+   "https://digital-pintu-admin.vercel.app",
 ];
 
 // app.use(
