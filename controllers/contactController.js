@@ -24,6 +24,14 @@ export const sendContact = async (req, res) => {
       return res.status(400).json({ success: false, message: "Message is required." });
     }
 
+    const emailUser = process.env.EMAIL_USER?.trim();
+    if (!transporter || !emailUser) {
+      return res.status(500).json({
+        success: false,
+        message: "Email service is not configured.",
+      });
+    }
+
     const contact = await Contact.create({
       name: name.trim(),
       email: email.trim().toLowerCase(),
@@ -46,8 +54,9 @@ export const sendContact = async (req, res) => {
 
 
     await transporter.sendMail({
-      from: `"Digital Pintu Contact" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER,
+      from: `"Digital Pintu Contact" <${emailUser}>`,
+      to: emailUser,
+      replyTo: contact.email,
       subject: "New Contact Form Submission",
       html: `
         <div style="font-family:Arial,sans-serif;line-height:1.6;color:#0f172a;">

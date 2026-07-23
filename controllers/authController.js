@@ -128,13 +128,6 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    if (user.role !== "admin") {
-      return res.status(403).json({
-        success: false,
-        message: "Admin access required",
-      });
-    }
-
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {

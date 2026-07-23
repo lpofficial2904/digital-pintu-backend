@@ -215,7 +215,7 @@ const technologySchema = new mongoose.Schema(
     },
     icon: {
       type: String,
-      required: true,
+      default: "",
     },
   },
   { _id: false }
