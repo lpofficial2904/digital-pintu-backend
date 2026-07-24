@@ -17,8 +17,20 @@ import {
 } from "../controllers/adminController.js";
 import { createAdminService, deleteService, getAdminServices, updateService, updateServiceStatus } from "../controllers/service.controller.js";
 import { createAdminReview, deleteReview, getAdminReviews, updateReview } from "../controllers/reviewController.js";
+import {
+adminLogin,
+adminLogout,
+adminMe
+} from "../controllers/authController.js";
 
 const router = express.Router();
+
+
+router.post("/login",adminLogin);
+
+router.post("/logout",adminLogout);
+
+router.get("/me",adminProtect,adminMe);
 
 router.get("/stats", adminProtect, getAdminStats);
 // Protected service management uses the existing service controllers; public routes remain read-only.
